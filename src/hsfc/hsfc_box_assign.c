@@ -437,21 +437,31 @@ static double next_query_3d (ZZ *zz, double *lquerybox, double *hquerybox,
    unsigned int intersect_hi, intersect_lo;
    double t;
    unsigned i, quadrant, level;
-   static const unsigned int *dk[] =
-      {data3d,      data3d +8,   data3d +16,  data3d +24,
-       data3d +32,  data3d +40,  data3d +48,  data3d +56,
-       data3d +64,  data3d +72,  data3d +80,  data3d +88,
-       data3d +96,  data3d +104, data3d +112, data3d +120,
-       data3d +128, data3d +136, data3d +144, data3d +152,
-       data3d +160, data3d +168, data3d +176, data3d +184};
+   const unsigned int* const dk[] = {
+      data3d,      data3d +8,   data3d +16,  data3d +24,  data3d +32,  
+      data3d +40,  data3d +48,  data3d +56,  data3d +64,  data3d +72,  
+      data3d +80,  data3d +88,  data3d +96,  data3d +104, data3d +112, 
+      data3d +120, data3d +128, data3d +136, data3d +144, data3d +152,
+      data3d +160, data3d +168, data3d +176, data3d +184, data3d +192,
+      data3d +200, data3d +208, data3d +216, data3d +224, data3d +232,  
+      data3d +240, data3d +248, data3d +256, data3d +264, data3d +272,  
+      data3d +280, data3d +288, data3d +296, data3d +304, data3d +312, 
+      data3d +320, data3d +328, data3d +336, data3d +344, data3d +352,
+      data3d +360, data3d +368, data3d +376, data3d +384, data3d +392
+   };
 
-   static const unsigned int *st[] =
-      {state3d,      state3d +8,   state3d +16,  state3d +24,
-       state3d +32,  state3d +40,  state3d +48,  state3d +56,
-       state3d +64,  state3d +72,  state3d +80,  state3d +88,
-       state3d +96,  state3d +104, state3d +112, state3d +120,
-       state3d +128, state3d +136, state3d +144, state3d +152,
-       state3d +160, state3d +168, state3d +176, state3d +184};
+   const unsigned int* const st[] = {
+      state3d,      state3d +8,   state3d +16,  state3d +24,  state3d +32,  
+      state3d +40,  state3d +48,  state3d +56,  state3d +64,  state3d +72,  
+      state3d +80,  state3d +88,  state3d +96,  state3d +104, state3d +112, 
+      state3d +120, state3d +128, state3d +136, state3d +144, state3d +152,
+      state3d +160, state3d +168, state3d +176, state3d +184, state3d +192,
+      state3d +200, state3d +208, state3d +216, state3d +224, state3d +232,  
+      state3d +240, state3d +248, state3d +256, state3d +264, state3d +272,  
+      state3d +280, state3d +288, state3d +296, state3d +304, state3d +312, 
+      state3d +320, state3d +328, state3d +336, state3d +344, state3d +352,
+      state3d +360, state3d +368, state3d +376, state3d +384, state3d +392
+   };
 
    static const unsigned int MAXLEVEL = 18;  /* only 56 significant bits, 18 per dimension */
 
