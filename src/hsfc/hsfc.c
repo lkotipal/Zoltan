@@ -66,6 +66,8 @@ extern "C" {
 #include "zz_const.h"
 #include <float.h>
 
+int useCurve = 0;
+
 /****************************************************************************/
 
 static int partition_stats(ZZ *zz, int ndots,
@@ -136,7 +138,7 @@ int Zoltan_HSFC(
    double     ddummy;
    int        dim;
    char      *yo = "Zoltan_HSFC";
-   char curve[MAX_PARAM_STRING_LEN];
+   char       curve[MAX_PARAM_STRING_LEN];
 
    /* begin program with trace, timing, and initializations */
    ZOLTAN_TRACE_ENTER (zz, yo);
@@ -153,57 +155,11 @@ int Zoltan_HSFC(
    strncpy(curve, "octree", MAX_PARAM_STRING_LEN);
    param = idummy = final_output = 0;
    ddummy = 0.0;
-   Zoltan_Assign_Param_Vals (zz->Params, HSFC_params, zz->Debug_Level, zz->Proc,
-    zz->Debug_Proc);
+   Zoltan_Assign_Param_Vals (zz->Params, HSFC_params, zz->Debug_Level, zz->Proc, zz->Debug_Proc);
 
    if (sizeof (int) != 4) {
      ZOLTAN_HSFC_ERROR(ZOLTAN_FATAL,
                        "HSFC implemented only for 32-bit integers");
-   }
-
-   ZOLTAN_PRINT_WARN(zz->Proc, yo, curve); // Debug print to see curve is set
-   if (strcasecmp(curve, "octree")) {
-      data3d =   octree_data3d;
-      state3d =  octree_state3d;
-      idata3d =  octree_idata3d;
-      istate3d = octree_istate3d;
-   } else if (strcasecmp(curve, "butz")) {
-      data3d =   butz_data3d;
-      state3d =  butz_state3d;
-      idata3d =  butz_idata3d;
-      istate3d = butz_istate3d;
-   } else if (strcasecmp(curve, "alfa")) {
-      data3d =   alfa_data3d;
-      state3d =  alfa_state3d;
-      idata3d =  alfa_idata3d;
-      istate3d = alfa_istate3d;
-   } else if (strcasecmp(curve, "harmonious")) {
-      data3d =   harmonious_data3d;
-      state3d =  harmonious_state3d;
-      idata3d =  harmonious_idata3d;
-      istate3d = harmonious_istate3d;
-   } else if (strcasecmp(curve, "sasburg")) {
-      data3d =   sasburg_data3d;
-      state3d =  sasburg_state3d;
-      idata3d =  sasburg_idata3d;
-      istate3d = sasburg_istate3d;
-   } else if (strcasecmp(curve, "basecamp")) {
-      data3d =   basecamp_data3d;
-      state3d =  basecamp_state3d;
-      idata3d =  basecamp_idata3d;
-      istate3d = basecamp_istate3d;
-   } else if (strcasecmp(curve, "beta")) {
-      data3d =   beta_data3d;
-      state3d =  beta_state3d;
-      idata3d =  beta_idata3d;
-      istate3d = beta_istate3d;
-   } else if (strcasecmp(curve, "z")) {
-      data3d =   z_data3d;
-      state3d =  z_state3d;
-      idata3d =  z_idata3d;
-      istate3d = z_istate3d;
-   } else {
-      ZOLTAN_HSFC_ERROR(ZOLTAN_FATAL, "Invalid HSFC curve");
    }
 
    /* allocate persistent storage required by box assign and point assign */
@@ -267,6 +223,39 @@ int Zoltan_HSFC(
    }
    else{
      dim = d->ndimension;
+   }
+
+   ZOLTAN_PRINT_WARN(zz->Proc, yo, curve); // Debug print to see curve is set
+   if (!strcasecmp(curve, "z")) {
+      ZOLTAN_PRINT_WARN(zz->Proc, yo, "I am Z"); // Debug print to see curve is set
+      useCurve = 0;
+   } else if (dim == 2) {
+      // 2D runs use Hilbert unless Z is wanted
+      ZOLTAN_HSFC_ERROR(ZOLTAN_FATAL, "I am Hilbert");
+      useCurve = HILBERT;
+   } else if (!strcasecmp(curve, "octree")) {
+      ZOLTAN_PRINT_WARN(zz->Proc, yo, "I am Octree"); // Debug print to see curve is set
+      useCurve = OCTREE;
+   } else if (!strcasecmp(curve, "butz")) {
+      ZOLTAN_PRINT_WARN(zz->Proc, yo, "I am Butz"); // Debug print to see curve is set
+      useCurve = BUTZ;
+   } else if (!strcasecmp(curve, "alfa")) {
+      ZOLTAN_PRINT_WARN(zz->Proc, yo, "I am Alfa"); // Debug print to see curve is set
+      useCurve = ALFA;
+   } else if (!strcasecmp(curve, "harmonious")) {
+      ZOLTAN_PRINT_WARN(zz->Proc, yo, "I am Harmonious"); // Debug print to see curve is set
+      useCurve = HARMONIOUS;
+   } else if (!strcasecmp(curve, "sasburg")) {
+      ZOLTAN_PRINT_WARN(zz->Proc, yo, "I am Sasburg"); // Debug print to see curve is set
+      useCurve = SASBURG;
+   } else if (!strcasecmp(curve, "basecamp")) {
+      ZOLTAN_PRINT_WARN(zz->Proc, yo, "I am Basecamp"); // Debug print to see curve is set
+      useCurve = BASECAMP;
+   } else if (!strcasecmp(curve, "beta")) {
+      ZOLTAN_PRINT_WARN(zz->Proc, yo, "I am Beta"); // Debug print to see curve is set
+      useCurve = BETA;
+   } else {
+      ZOLTAN_HSFC_ERROR(ZOLTAN_FATAL, "Invalid HSFC curve");
    }
 
    for (i = 0, tmp=0; i < ndots; i++, tmp += d->ndimension) {

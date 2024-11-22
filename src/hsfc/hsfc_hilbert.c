@@ -76,9 +76,9 @@ double Zoltan_HSFC_InvHilbert1d (ZZ *zz, double *coord)
 
 /* Given x,y coordinates in [0,1]x[0,1], returns the Hilbert key [0,1] */
 double Zoltan_HSFC_InvHilbert2d (ZZ *zz, double *coord)
-   {
-   static const unsigned *d[]={idata2d,  idata2d  +4, idata2d  +8, idata2d  +12};
-   static const unsigned *s[]={istate2d, istate2d +4, istate2d +8, istate2d +12};
+{
+   unsigned const int* const d = tables2d[useCurve].idata;
+   unsigned const int* const s = tables2d[useCurve].istate;
 
    int level;
    unsigned int key[2], c[2], temp, state;
@@ -103,9 +103,9 @@ double Zoltan_HSFC_InvHilbert2d (ZZ *zz, double *coord)
 
       /* treat key[] as long shift register, shift in converted coordinate */
       key[0] = (key[0] << 2) | (key[1] >> 30);
-      key[1] = (key[1] << 2) | *(d[state] + temp);
+      key[1] = (key[1] << 2) | d[4 * state + temp];
 
-      state = *(s[state] + temp);
+      state = (s[4 * state + temp]);
       }
 
    /* convert 2 part Hilbert key to double and return */
@@ -117,31 +117,8 @@ double Zoltan_HSFC_InvHilbert2d (ZZ *zz, double *coord)
 /* Given x,y,z coordinates in [0,1]x[0,1]x[0,1], returns Hilbert key in [0,1] */
 double Zoltan_HSFC_InvHilbert3d (ZZ *zz, double *coord)
 {
-   unsigned const int* const d[] = {
-      idata3d,      idata3d +8,   idata3d +16,  idata3d +24,  idata3d +32,  
-      idata3d +40,  idata3d +48,  idata3d +56,  idata3d +64,  idata3d +72,  
-      idata3d +80,  idata3d +88,  idata3d +96,  idata3d +104, idata3d +112, 
-      idata3d +120, idata3d +128, idata3d +136, idata3d +144, idata3d +152,
-      idata3d +160, idata3d +168, idata3d +176, idata3d +184, idata3d +192,
-      idata3d +200, idata3d +208, idata3d +216, idata3d +224, idata3d +232,  
-      idata3d +240, idata3d +248, idata3d +256, idata3d +264, idata3d +272,  
-      idata3d +280, idata3d +288, idata3d +296, idata3d +304, idata3d +312, 
-      idata3d +320, idata3d +328, idata3d +336, idata3d +344, idata3d +352,
-      idata3d +360, idata3d +368, idata3d +376, idata3d +384, idata3d +392
-   };
-
-   unsigned const int* const s[] = {
-      istate3d,      istate3d +8,   istate3d +16,  istate3d +24,  istate3d +32,  
-      istate3d +40,  istate3d +48,  istate3d +56,  istate3d +64,  istate3d +72,  
-      istate3d +80,  istate3d +88,  istate3d +96,  istate3d +104, istate3d +112, 
-      istate3d +120, istate3d +128, istate3d +136, istate3d +144, istate3d +152,
-      istate3d +160, istate3d +168, istate3d +176, istate3d +184, istate3d +192,
-      istate3d +200, istate3d +208, istate3d +216, istate3d +224, istate3d +232,  
-      istate3d +240, istate3d +248, istate3d +256, istate3d +264, istate3d +272,  
-      istate3d +280, istate3d +288, istate3d +296, istate3d +304, istate3d +312, 
-      istate3d +320, istate3d +328, istate3d +336, istate3d +344, istate3d +352,
-      istate3d +360, istate3d +368, istate3d +376, istate3d +384, istate3d +392
-   };
+   unsigned const int* const d = tables3d[useCurve].idata;
+   unsigned const int* const s = tables3d[useCurve].istate;
 
    int level;
    unsigned int key[2], c[3], temp, state;
@@ -168,9 +145,9 @@ double Zoltan_HSFC_InvHilbert3d (ZZ *zz, double *coord)
 
       /* treat key[] as long shift register, shift in converted coordinate */
       key[0] = (key[0] << 3) |  (key[1] >> 29);
-      key[1] = (key[1] << 3) | *(d[state] + temp);
+      key[1] = (key[1] << 3) | d[8 * state + temp];
 
-      state = *(s[state] + temp);
+      state = s[8 * state + temp];
       }
 
    /* convert 2 part Hilbert key to double and return */
@@ -202,8 +179,8 @@ void Zoltan_HSFC_Hilbert1d (ZZ *zz, double *coord, double key)
 /* Given the Hilbert key, returns the 2-d coordinates in [0,1]x[0,1] */
 void Zoltan_HSFC_Hilbert2d (ZZ *zz, double *coord, double key)
    {
-   static const unsigned *d[] = {data2d,  data2d  +4, data2d  +8, data2d  +12};
-   static const unsigned *s[] = {state2d, state2d +4, state2d +8, state2d +12};
+   unsigned const int* const d = tables2d[useCurve].idata;
+   unsigned const int* const s = tables2d[useCurve].istate;
    int level, state;
    unsigned int c[2], ikey[2], temp;
    double t;
@@ -221,8 +198,8 @@ void Zoltan_HSFC_Hilbert2d (ZZ *zz, double *coord, double key)
    c[0] = c[1] = 0;
    state = 0;
    for (level = 0; level < MAXLEVEL; level++) {
-      temp  = *(d[state] + (ikey[0] >> 30));      /* 2 bits: xy */
-      state = *(s[state] + (ikey[0] >> 30));
+      temp  = d[4 * state + (ikey[0] >> 30)];      /* 2 bits: xy */
+      state = s[4 * state + (ikey[0] >> 30)];
 
       c[0] |= ((temp & 2) << (30-level));         /* insert x bit */
       c[1] |= ((temp & 1) << (31-level));         /* insert y bit */
@@ -242,31 +219,8 @@ void Zoltan_HSFC_Hilbert2d (ZZ *zz, double *coord, double key)
 /* Given the Hilbert key, returns the 3-d coordinates in [0,1]x[0,1]x[0,1] */
 void Zoltan_HSFC_Hilbert3d (ZZ *zz, double *coord, double key)
 {
-   unsigned const int* const d[] = {
-      data3d,      data3d +8,   data3d +16,  data3d +24,  data3d +32,  
-      data3d +40,  data3d +48,  data3d +56,  data3d +64,  data3d +72,  
-      data3d +80,  data3d +88,  data3d +96,  data3d +104, data3d +112, 
-      data3d +120, data3d +128, data3d +136, data3d +144, data3d +152,
-      data3d +160, data3d +168, data3d +176, data3d +184, data3d +192,
-      data3d +200, data3d +208, data3d +216, data3d +224, data3d +232,  
-      data3d +240, data3d +248, data3d +256, data3d +264, data3d +272,  
-      data3d +280, data3d +288, data3d +296, data3d +304, data3d +312, 
-      data3d +320, data3d +328, data3d +336, data3d +344, data3d +352,
-      data3d +360, data3d +368, data3d +376, data3d +384, data3d +392
-   };
-
-   unsigned const int* const s[] = {
-      state3d,      state3d +8,   state3d +16,  state3d +24,  state3d +32,  
-      state3d +40,  state3d +48,  state3d +56,  state3d +64,  state3d +72,  
-      state3d +80,  state3d +88,  state3d +96,  state3d +104, state3d +112, 
-      state3d +120, state3d +128, state3d +136, state3d +144, state3d +152,
-      state3d +160, state3d +168, state3d +176, state3d +184, state3d +192,
-      state3d +200, state3d +208, state3d +216, state3d +224, state3d +232,  
-      state3d +240, state3d +248, state3d +256, state3d +264, state3d +272,  
-      state3d +280, state3d +288, state3d +296, state3d +304, state3d +312, 
-      state3d +320, state3d +328, state3d +336, state3d +344, state3d +352,
-      state3d +360, state3d +368, state3d +376, state3d +384, state3d +392
-   };
+   unsigned const int* const d = tables3d[useCurve].data;
+   unsigned const int* const s = tables3d[useCurve].state;
 
    int level, state;
    unsigned int c[3], ikey[2], temp;
@@ -285,8 +239,8 @@ void Zoltan_HSFC_Hilbert3d (ZZ *zz, double *coord, double key)
    c[0] = c[1] = c[2] = 0;
    state = 0;
    for (level = 0; level < MAXLEVEL; level++) {
-      temp  = *(d[state] + (ikey[0] >> 29));     /* get next 3 bits: xyz */
-      state = *(s[state] + (ikey[0] >> 29));
+      temp  = d[8 * state + (ikey[0] >> 29)];     /* get next 3 bits: xyz */
+      state = s[8 * state + (ikey[0] >> 29)];
 
       c[0] |= ((temp & 4) << (29-level));        /* insert x bit */
       c[1] |= ((temp & 2) << (30-level));        /* insert y bit */
