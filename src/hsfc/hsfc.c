@@ -225,34 +225,24 @@ int Zoltan_HSFC(
      dim = d->ndimension;
    }
 
-   ZOLTAN_PRINT_WARN(zz->Proc, yo, curve); // Debug print to see curve is set
    if (!strcasecmp(curve, "z")) {
-      ZOLTAN_PRINT_WARN(zz->Proc, yo, "I am Z"); // Debug print to see curve is set
       useCurve = 0;
    } else if (dim == 2) {
       // 2D runs use Hilbert unless Z is wanted
-      ZOLTAN_HSFC_ERROR(ZOLTAN_FATAL, "I am Hilbert");
       useCurve = HILBERT;
    } else if (!strcasecmp(curve, "octree")) {
-      ZOLTAN_PRINT_WARN(zz->Proc, yo, "I am Octree"); // Debug print to see curve is set
       useCurve = OCTREE;
    } else if (!strcasecmp(curve, "butz")) {
-      ZOLTAN_PRINT_WARN(zz->Proc, yo, "I am Butz"); // Debug print to see curve is set
       useCurve = BUTZ;
    } else if (!strcasecmp(curve, "alfa")) {
-      ZOLTAN_PRINT_WARN(zz->Proc, yo, "I am Alfa"); // Debug print to see curve is set
       useCurve = ALFA;
    } else if (!strcasecmp(curve, "harmonious")) {
-      ZOLTAN_PRINT_WARN(zz->Proc, yo, "I am Harmonious"); // Debug print to see curve is set
       useCurve = HARMONIOUS;
    } else if (!strcasecmp(curve, "sasburg")) {
-      ZOLTAN_PRINT_WARN(zz->Proc, yo, "I am Sasburg"); // Debug print to see curve is set
       useCurve = SASBURG;
-   } else if (!strcasecmp(curve, "basecamp")) {
-      ZOLTAN_PRINT_WARN(zz->Proc, yo, "I am Basecamp"); // Debug print to see curve is set
-      useCurve = BASECAMP;
+   } else if (!strcasecmp(curve, "base_camp")) {
+      useCurve = BASE_CAMP;
    } else if (!strcasecmp(curve, "beta")) {
-      ZOLTAN_PRINT_WARN(zz->Proc, yo, "I am Beta"); // Debug print to see curve is set
       useCurve = BETA;
    } else {
       ZOLTAN_HSFC_ERROR(ZOLTAN_FATAL, "Invalid HSFC curve");
